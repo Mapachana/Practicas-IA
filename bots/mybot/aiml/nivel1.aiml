@@ -1,0 +1,254 @@
+<?xml version="1.0"
+encoding="UTF-8"?>
+<aiml version="2.0">
+
+
+<!--
+Devuelve una lista de posiciones donde hay huecos libres (se puede reservar l¡cita en ellos) de un dia determinado.
+Si devuelve la pos 9 la cita libre sera de 8:00-9:00.
+-->
+<category>
+<pattern>libres dia * from * to * </pattern>
+<template>
+<think>
+    <set var="aux"><srai>LIST OF DAY <star/> </srai></set>
+    <set name="citas_dia"><srai>SUBLIST FROM <star index="2"/> TO <star index="3"/> OF <get var="aux"/></srai></set>
+    <set name="libres"></set>
+    <set var="indice"><star index="2"/></set>
+    <set var="hora"><star index="2"/></set>
+</think>
+<think>
+    <set var="item">
+        <srai>ITERATE <get name="citas_dia"/> </srai>
+    </set>
+</think>
+<condition var="item">
+    <li value="$"></li>
+    <li>
+        <condition var="item">
+            <li value="OCUPADO">
+                <think>
+                    <set var="indice">
+                    <srai>PLUS <get var="indice"/> 1</srai>
+                    </set>
+                </think>
+            </li>
+            <li>
+                <think>
+                    <set name="libres">
+                    <get name="libres"/> <get var="indice"/>
+                    </set>
+                    <set var="indice">
+                        <srai>PLUS <get var="indice"/> 1</srai>
+                    </set>
+                </think>
+            </li>
+        </condition>
+        <think>
+            <set var="item">
+                <srai>NEXT</srai>
+            </set>
+        </think> 
+        <loop/> 
+    </li>
+</condition>
+citas libres: <get name="libres"/>
+citas dia: <get name="citas_dia"/>
+</template>
+</category>
+
+
+<!--
+Convierte una fecha dada en formato en numerico a una fecha en formato compatible con el del archivo.
+Ejemplo:(3 de Abril de 2020) 03 04 20 -> 03-04-20 
+-->
+<category>
+<pattern>Convert fecha *</pattern>
+<template>
+<think>
+		<set var="tmp"><star/></set>
+		<set var="solucion"><first><get var="tmp"/></first></set>
+		<set var="tmp"><rest><get var="tmp"/></rest></set>
+		<condition var="tmp">
+			<li value="NIL">
+			</li>
+			<li>
+				<set var="solucion"><get var="solucion"/>-<first><get var="tmp"/></first></set>
+				<set var="tmp"><rest><get var="tmp"/></rest></set>
+				<loop/>
+			</li>
+		</condition>
+	  </think>
+	<get var="solucion"/>
+</template>
+</category>
+
+<!-- falta hacer unaf uncion que me convierta de la lista 9 a 8:00-9:00 -->
+<!-- FIXME SIN TERMINAR -->
+<!--
+Dada una lista de elementos que representan posiciones de las horas de cita se devuelve la traduccion para mostrarla por pantalla
+Ejemplo: 9 -> 8:00-9:00
+-->
+<category>
+<pattern>convertir horas *</pattern>
+<template>
+<think>
+    <set var="item">
+        <srai>ITERATE <get name="citas_dia"/> </srai>
+    </set>
+</think>
+<condition var="item">
+    <li value="$"></li>
+    <li>
+        <condition var="item">
+            <li value="OCUPADO">
+                <think>
+                    <set var="indice">
+                    <srai>PLUS <get var="indice"/> 1</srai>
+                    </set>
+                </think>
+            </li>
+            <li>
+                <think>
+                    <set name="libres">
+                    <get name="libres"/> <get var="indice"/>
+                    </set>
+                    <set var="indice">
+                        <srai>PLUS <get var="indice"/> 1</srai>
+                    </set>
+                </think>
+            </li>
+        </condition>
+        <think>
+            <set var="item">
+                <srai>NEXT</srai>
+            </set>
+        </think> 
+        <loop/> 
+    </li>
+</condition>
+</template>
+</category>
+
+
+<topic name="preguntar_dias">
+<!--
+Patron que detecta cuando se le piden citas, debe haberse saludado primero al bot para poder pedirla.
+Rango: dia completo
+Formato: dia de mes(letra)
+-->
+<category>
+<pattern> * cita * <set>dia</set> de <set>month_es</set> </pattern>
+<template>
+Las horas disponibles para ese dia son:
+<srai>libres dia <srai>convert fecha <map name="dias_formato"><star index="3"/></map> <map name="month_index_ES"> <star index="4"/></map> <get name="anio"/> </srai> from <get name="pos_comienzo"/> to <get name="pos_fin"/></srai>
+</template>
+</category>
+
+<!--
+Patron que detecta cuando se le piden citas, debe haberse saludado primero al bot para poder pedirla.
+Rango: dia completo
+Formato: dia - mes(numero)
+-->
+<category>
+<pattern> * cita * <set>dia</set> - <set>mes_num</set> </pattern>
+<template>
+Las horas disponibles para ese dia son:
+<srai>libres dia <srai>convert fecha <map name="dias_formato"><star index="3"/></map> <map name="dias_formato"><star index="4"/></map> <get name="anio"/> </srai> from <get name="pos_comienzo"/> to <get name="pos_fin"/></srai>
+</template>
+</category>
+
+<!--
+Patron que detecta cuando se le piden citas, debe haberse saludado primero al bot para poder pedirla.
+Rango: mañana
+Formato: dia - mes(numero)
+-->
+<category>
+<pattern> * cita * <set>dia</set> - <set>mes_num</set> * [maniana manana] </pattern>
+<template>
+<think>
+    <set name="pos_comienzo"><get name="pos_comienzo_maniana"/></set>
+    <set name="pos_fin"><get name="pos_fin_maniana"/></set>
+</think>
+<srai><star/> cita <star index="2"/> <star index="3"/> - <star index="4"/></srai>
+</template>
+</category>
+
+<!--
+Patron que detecta cuando se le piden citas, debe haberse saludado primero al bot para poder pedirla.
+Rango: tarde
+Formato: dia - mes(numero)
+-->
+<category>
+<pattern> * cita * <set>dia</set> - <set>mes_num</set> * tarde </pattern>
+<template>
+<think>
+    <set name="pos_comienzo"><get name="pos_comienzo_tarde"/></set>
+    <set name="pos_fin"><get name="pos_fin_tarde"/></set>
+</think>
+<srai><star/> cita <star index="2"/> <star index="3"/> - <star index="4"/></srai>
+</template>
+</category>
+
+<!--
+Patron que detecta cuando se le piden citas, debe haberse saludado primero al bot para poder pedirla.
+Rango: mañana
+Formato: dia de mes(letra)
+-->
+<category>
+<pattern> * cita * <set>dia</set> de <set>month_es</set> * [maniana manana] </pattern>
+<template>
+<think>
+    <set name="pos_comienzo"><get name="pos_comienzo_maniana"/></set>
+    <set name="pos_fin"><get name="pos_fin_maniana"/></set>
+</think>
+<srai><star/> cita <star index="2"/> <star index="3"/> de <star index="4"/></srai>
+</template>
+</category>
+
+<!--
+Patron que detecta cuando se le piden citas, debe haberse saludado primero al bot para poder pedirla.
+Rango: tarde
+Formato: dia de mes(letra)
+-->
+<category>
+<pattern> * cita * <set>dia</set> de <set>month_es</set> * tarde </pattern>
+<template>
+<think>
+    <set name="pos_comienzo"><get name="pos_comienzo_tarde"/></set>
+    <set name="pos_fin"><get name="pos_fin_tarde"/></set>
+</think>
+<srai><star/> cita <star index="2"/> <star index="3"/> de <star index="4"/></srai>
+</template>
+</category>
+</topic>
+
+<!--
+Funcion para empezar la comunicacion, asigna todas las variables necesarias
+-->
+<category>
+<pattern>Buenos dias</pattern>
+<template>
+Bienvenido, en que puedo ayudarle
+<think>
+    <set name="topic">preguntar_dias</set>
+    <set name="anio">20</set>
+    <set name="pos_comienzo">9</set>
+    <set name="pos_fin">20</set>
+    <set name="pos_comienzo_maniana">9</set>
+    <set name="pos_fin_maniana">13</set>
+    <set name="pos_comienzo_tarde">14</set>
+    <set name="pos_fin_tarde">20</set>
+</think>
+</template>
+</category>
+
+<!--
+Funcion para empezar la comunicacion, asigna todas las variables necesarias
+-->
+<category>
+<pattern>Buenas tardes</pattern>
+<template><srai>Buenos dias</srai></template>
+</category>
+
+</aiml>

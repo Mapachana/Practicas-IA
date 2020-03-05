@@ -1,0 +1,60 @@
+<?xml version="1.0"
+encoding="UTF-8"?>
+<aiml version="2.0">
+
+<!--
+Pregunta 1: hablame un poco de ti
+-->
+<category> 
+<pattern>^ [Habl+ Cuent+] * ti</pattern>
+<template>respondo a cuentame de ti</template>
+</category>
+
+<!--
+Pregunta 2: Cual es tu mayor defecto
+-->
+<category>
+<pattern>^ [defecto defectos]</pattern>
+<template>respondo a cual es tu mayor defecto</template>
+</category>
+
+<!--
+Cuales son tus 3 mayores virtudes
+-->
+<category> 
+<pattern>Cuales son tus 3 mayores virtudes</pattern>
+<template>
+Esa pregunta es dificil, creo que destacan tres: soy majo soy buena gente y soy rapido
+</template>
+</category>
+
+<category>
+<pattern>^ <set>number</set> ^ virtudes ^</pattern>
+<template><srai>Cuales son tus 3 mayores virtudes</srai></template>
+</category>
+
+<!--
+Pregunta 4: Te consideras una persona creativa
+-->
+<category>
+<pattern> 
+* [considera+ crees piensas] ^ [creativo creativa]
+</pattern>
+<template>
+respondo a si soy creativo
+</template>
+</category>
+
+<!--
+Pregunta 5: Por que deberiamos escogerte a ti
+-->
+<category> 
+<pattern>
+por que [deber+ tendr+] escoger+ ^
+</pattern>
+<template>
+Hola jaja respondo a porque escogerme a mi
+</template>
+</category>
+
+</aiml>
