@@ -1,0 +1,9 @@
+/home/ana/Escritorio/Universidad/3_TERCERO/2_Cuatri/IA/practicas/P2/practica2_linux/CMakeFiles/BelkanSG.dir
+/home/ana/Escritorio/Universidad/3_TERCERO/2_Cuatri/IA/practicas/P2/practica2_linux/CMakeFiles/Belkan.dir
+/home/ana/Escritorio/Universidad/3_TERCERO/2_Cuatri/IA/practicas/P2/practica2_linux/CMakeFiles/rebuild_cache.dir
+/home/ana/Escritorio/Universidad/3_TERCERO/2_Cuatri/IA/practicas/P2/practica2_linux/CMakeFiles/motorLib.dir
+/home/ana/Escritorio/Universidad/3_TERCERO/2_Cuatri/IA/practicas/P2/practica2_linux/CMakeFiles/obj3DLib.dir
+/home/ana/Escritorio/Universidad/3_TERCERO/2_Cuatri/IA/practicas/P2/practica2_linux/CMakeFiles/edit_cache.dir
+/home/ana/Escritorio/Universidad/3_TERCERO/2_Cuatri/IA/practicas/P2/practica2_linux/CMakeFiles/GLUILib.dir
+/home/ana/Escritorio/Universidad/3_TERCERO/2_Cuatri/IA/practicas/P2/practica2_linux/CMakeFiles/modelosBelkanLib.dir
+/home/ana/Escritorio/Universidad/3_TERCERO/2_Cuatri/IA/practicas/P2/practica2_linux/CMakeFiles/comportamientosLib.dir
