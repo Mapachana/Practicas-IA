@@ -4,27 +4,43 @@ encoding="UTF-8"?>
 
 <!--
 Pregunta 1: hablame un poco de ti
+Ejemplos: 
+- que te parece si me hablas un poco de ti?
+- cuentanos algo sobre ti?
+- hablame un poco de ti?
+- hablemos sobre ti?
 -->
 <category> 
 <pattern>^ [Habl+ Cuent+] * ti</pattern>
-<template>respondo a cuentame de ti</template>
+<template>
+Estudie en la UGR e hice el master en ciberseguridad. Tengo un B2 en ingles y un C1 de frances
+</template>
 </category>
 
 <!--
 Pregunta 2: Cual es tu mayor defecto
+Ejemplos:
+- Cual es tu mayor defecto?por que deberiamos escogerte a ti y no a otro?
+- Cual consideras que es tu mayor defecto?
+- Tienes algun defecto?
 -->
 <category>
 <pattern>^ [defecto defectos]</pattern>
-<template>respondo a cual es tu mayor defecto</template>
+<template>Creo que mi mayor defecto es que soy muy indeciso</template>
 </category>
 
 <!--
 Cuales son tus 3 mayores virtudes
+Ejemplos:
+- Cuales son tus 3 mayores virtudes?
+- Cuales consideras que son tus 5 mejores virtudes?
+- que 3 virtudes crees tener?
+- cuales creen que son tus 3 mayores virtudes?
 -->
 <category> 
 <pattern>Cuales son tus 3 mayores virtudes</pattern>
 <template>
-Esa pregunta es dificil, creo que destacan tres: soy majo soy buena gente y soy rapido
+Esa pregunta es dificil, creo que destacan tres, entre muchas otras: soy simpatico, se trabajar en equipo y soy muy puntual
 </template>
 </category>
 
@@ -35,25 +51,34 @@ Esa pregunta es dificil, creo que destacan tres: soy majo soy buena gente y soy 
 
 <!--
 Pregunta 4: Te consideras una persona creativa
+Ejemplo:
+- te consideras una persona creativa?
+- crees que eres creativo?
+- piensas que eres creativo?
+- crees que la gente de tu entorno te considera creativo?
 -->
 <category>
 <pattern> 
-* [considera+ crees piensas] ^ [creativo creativa]
+^ [considera+ crees piensas] ^ [creativo creativa]
 </pattern>
 <template>
-respondo a si soy creativo
+Creo que soy una persona bastante creativa a la que le encanta diseñar e implementar sus ideas.
 </template>
 </category>
 
 <!--
 Pregunta 5: Por que deberiamos escogerte a ti
+Ejemplos:
+- por que deberiamos escogerte a ti?
+- por que tendriamos que escogerte?
+- por que deberiamos escogerte a ti y no a otro?
 -->
 <category> 
 <pattern>
-por que [deber+ tendr+] escoger+ ^
+por que [deber+ tendr+] (que) escoger+ ^
 </pattern>
 <template>
-Hola jaja respondo a porque escogerme a mi
+Creo que escogerme a mi seria una buena idea porque se me da genial trabajar en equipo.
 </template>
 </category>
 

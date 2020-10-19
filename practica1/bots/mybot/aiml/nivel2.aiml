@@ -1,0 +1,376 @@
+<?xml version="1.0"
+encoding="UTF-8"?>
+<aiml version="2.0">
+
+
+<topic name="preguntar_dias">
+
+
+<!--
+Funcion para procesar cuando se quiere la cita
+-->
+<category>
+<pattern>fijar cita <set>dia</set> <set>month_es</set> *</pattern>
+<template>
+<think>
+    <set name="dia_cita"><srai>convert fecha <map name="dias_formato"><star index="1"/></map> <map name="month_index_ES"><star index="2"/></map> <get name="anio"/> </srai></set>
+    <set var="esta_libre"> <srai>libre dia <get name="dia_cita"/> </srai></set>
+</think>
+
+<condition var="esta_libre">
+    <li value="ocupado">
+        Ese dia esta ocupado, desea otra cita?
+    </li>
+    <li>
+        <think>
+            <set name="topic">preguntar_horas</set>
+        </think>
+        Las horas disponibles para ese dia son:
+        <set name="horas_posibles"><srai> convert horas <srai>libres dia <get name="dia_cita"/> from <get name="pos_comienzo"/> to <get name="pos_fin"/> </srai> </srai> </set>
+        Quieres alguna?
+    </li>
+</condition>
+</template>
+</category>
+
+
+<!--
+Funcion para procesar cuadno se quiere una cita en una hora concreta
+-->
+<category>
+<pattern>fijar cita <set>dia</set> <set>month_es</set> * at <set>horas</set></pattern>
+<template>
+<think>
+    <set name="dia_cita"><srai>convert fecha <map name="dias_formato"><star index="1"/></map> <map name="month_index_ES"><star index="2"/></map> <get name="anio"/> </srai></set>
+    <set var="esta_libre"> <srai>IS BUSY DAY <get name="dia_cita"/> AT <star index="4"/> </srai></set>
+</think>
+
+ <condition var="esta_libre">
+    <li value="TRUE">
+        Esa hora esta ocupada, por favor pida otra
+    </li>
+    <li>
+        Hora apuntada
+        <srai> MARK OCUPADO AT <star index="4"/> ON <get name="dia_cita"/> </srai>
+        <think><set name="topic">preguntar_horas</set></think>
+        <srai>no</srai>
+    </li>
+    </condition>
+</template>
+</category>
+
+
+<!--
+Funcion para pedir una cita ese mismo dia
+-->
+<category>
+<pattern> * cita ^ hoy ^ (<set>horario</set>) </pattern>
+<template>
+<think>
+    <set var="dia"><srai>WEEKDAY IN 0 DAYS</srai></set>
+    <set var="horario"><star index="4"/></set>
+</think>
+<condition var="dia">
+<li value="Sabado">
+    Solo hay citas de Lunes a Viernes.
+    <think>
+        <set name="topic">preguntar_horas</set>
+    </think>
+    <srai>no</srai>
+</li>
+<li value="Domingo">
+    Solo hay citas de Lunes a Viernes.
+    <think>
+        <set name="topic">preguntar_horas</set>
+    </think>
+    <srai>no</srai>
+</li>
+<li>
+    <condition var="horario">
+        <li value="maniana">
+            <think>
+                <set name="pos_comienzo"><get name="pos_comienzo_maniana"/></set>
+                <set name="pos_fin"><get name="pos_fin_maniana"/></set>
+            </think>
+        </li>
+        <li value="tarde">
+            <think>
+                <set name="pos_comienzo"><get name="pos_comienzo_tarde"/></set>
+                <set name="pos_fin"><get name="pos_fin_tarde"/></set>
+            </think>
+        </li>
+        <li></li>
+    </condition>
+    <srai>fijar cita <srai>DATE</srai> </srai>
+</li>
+</condition>
+
+</template>
+</category>
+
+
+<!--
+Funcion para pedir una cita al dia siguiente
+-->
+<category>
+<pattern>* cita ^ [maniana manana] ^ (<set>horario</set>) </pattern>
+<template>
+<think>
+    <set var="dia"><srai>WEEKDAY IN 1 DAYS</srai></set>
+    <set var="horario"><star index="4"/></set>
+</think>
+
+<condition var="dia">
+<li value="Sabado">
+    Solo hay citas de Lunes a Viernes.
+    <think>
+        <set name="topic">preguntar_horas</set>
+    </think>
+    <srai>no</srai>
+</li>
+<li value="Domingo">
+    Solo hay citas de Lunes a Viernes.
+    <think>
+        <set name="topic">preguntar_horas</set>
+    </think>
+    <srai>no</srai>
+</li>
+<li>
+    <condition var="horario">
+        <li value="maniana">
+            <think>
+                <set name="pos_comienzo"><get name="pos_comienzo_maniana"/></set>
+                <set name="pos_fin"><get name="pos_fin_maniana"/></set>
+            </think>
+        </li>
+        <li value="tarde">
+            <think>
+                <set name="pos_comienzo"><get name="pos_comienzo_tarde"/></set>
+                <set name="pos_fin"><get name="pos_fin_tarde"/></set>
+            </think>
+        </li>
+        <li></li>
+    </condition>
+    <srai>fijar cita <srai>DATE TOMORROW</srai> </srai>
+</li>
+</condition>
+</template>
+</category>
+
+
+<!--
+Funcion para pedir una cita dentro de dos dias
+-->
+<category>
+<pattern>* cita ^ $pasado [maniana manana] ^ (<set>horario</set>)</pattern>
+<template>
+<think>
+    <set var="dia"><srai>WEEKDAY IN 2 DAYS</srai></set>
+    <set var="horario"><star index="4"/></set>
+</think>
+
+<condition var="dia">
+<li value="Sabado">
+    Solo hay citas de Lunes a Viernes.
+    <think>
+        <set name="topic">preguntar_horas</set>
+    </think>
+    <srai>no</srai>
+</li>
+<li value="Domingo">
+    Solo hay citas de Lunes a Viernes.
+    <think>
+        <set name="topic">preguntar_horas</set>
+    </think>
+    <srai>no</srai>
+</li>
+<li>
+    <condition var="horario">
+        <li value="maniana">
+            <think>
+                <set name="pos_comienzo"><get name="pos_comienzo_maniana"/></set>
+                <set name="pos_fin"><get name="pos_fin_maniana"/></set>
+            </think>
+        </li>
+        <li value="tarde">
+            <think>
+                <set name="pos_comienzo"><get name="pos_comienzo_tarde"/></set>
+                <set name="pos_fin"><get name="pos_fin_tarde"/></set>
+            </think>
+        </li>
+        <li></li>
+    </condition>
+
+<srai>fijar cita <srai>DATE IN 2 DAYS</srai> </srai>
+</li>
+</condition>
+</template>
+</category>
+
+
+
+<!--
+Funcion para pedir una cita el siguiente dia de la semana
+-->
+<category>
+<pattern>* cita ^ [proximo siguiente] <set>dia_semana</set> ^ (<set>horario</set>) </pattern>
+<template>
+<think>
+    <set var="horario"><star index="4"/></set>
+</think>
+<condition var="horario">
+    <li value="maniana">
+        <think>
+            <set name="pos_comienzo"><get name="pos_comienzo_maniana"/></set>
+            <set name="pos_fin"><get name="pos_fin_maniana"/></set>
+        </think>
+    </li>
+    <li value="tarde">
+        <think>
+            <set name="pos_comienzo"><get name="pos_comienzo_tarde"/></set>
+            <set name="pos_fin"><get name="pos_fin_tarde"/></set>
+        </think>
+    </li>
+    <li></li>
+</condition>
+
+<think>
+    <set var="dias_restantes"><srai>DAYS UNTIL <star index="3"/></srai></set>
+</think>
+<srai>fijar cita <srai>DATE IN <get var="dias_restantes"/> DAYS</srai></srai>
+</template>
+</category>
+
+
+
+<!--
+Funcion para pedir cita en una fecha concreta a una hora concreta
+-->
+<category>
+<pattern> * cita * <set>dia</set> de <set>month_es</set> (a las) <set>horas</set></pattern>
+<template>
+<srai>fijar cita <star index="3"/> <star index="4"/> <get name="anio"/> at <star index="5"/></srai>
+</template>
+</category>
+
+
+<!--
+Funcion para pedir una cita ese mismo dia a una hora concreta
+-->
+<category>
+<pattern> * cita ^ hoy (a las) <set>horas</set> </pattern>
+<template>
+<think>
+    <set var="dia"><srai>WEEKDAY IN 0 DAYS</srai></set>
+</think>
+<condition var="dia">
+<li value="Sabado">
+    Solo hay citas de Lunes a Viernes.
+    <think>
+        <set name="topic">preguntar_horas</set>
+    </think>
+    <srai>no</srai>
+</li>
+<li value="Domingo">
+    Solo hay citas de Lunes a Viernes.
+    <think>
+        <set name="topic">preguntar_horas</set>
+    </think>
+    <srai>no</srai>
+</li>
+<li>
+    <srai>fijar cita <srai>DATE</srai> at <star index="3"/></srai>
+</li>
+</condition>
+
+</template>
+</category>
+
+
+<!--
+Funcion para pedir una cita al dia siguiente a una hora concreta
+-->
+<category>
+<pattern>* cita ^ [maniana manana] (a las) <set>horas</set> </pattern>
+<template>
+manana
+<think>
+    <set var="dia"><srai>WEEKDAY IN 1 DAYS</srai></set>
+</think>
+
+<condition var="dia">
+<li value="Sabado">
+    Solo hay citas de Lunes a Viernes.
+    <think>
+        <set name="topic">preguntar_horas</set>
+    </think>
+    <srai>no</srai>
+</li>
+<li value="Domingo">
+    Solo hay citas de Lunes a Viernes.
+    <think>
+        <set name="topic">preguntar_horas</set>
+    </think>
+    <srai>no</srai>
+</li>
+<li>
+    <srai>fijar cita <srai>DATE TOMORROW</srai> at <star index="3"/></srai>
+</li>
+</condition>
+</template>
+</category>
+
+
+<!--
+Funcion para pedir una cita dentro de dos dias a una hora concreta
+-->
+<category>
+<pattern>* cita ^ $pasado [maniana manana]  (a las) <set>horas</set></pattern>
+<template>
+pasado maniana
+<think>
+    <set var="dia"><srai>WEEKDAY IN 2 DAYS</srai></set>
+</think>
+
+<condition var="dia">
+<li value="Sabado">
+    Solo hay citas de Lunes a Viernes.
+    <think>
+        <set name="topic">preguntar_horas</set>
+    </think>
+    <srai>no</srai>
+</li>
+<li value="Domingo">
+    Solo hay citas de Lunes a Viernes.
+    <think>
+        <set name="topic">preguntar_horas</set>
+    </think>
+    <srai>no</srai>
+</li>
+<li>
+    <srai>fijar cita <srai>DATE IN 2 DAYS</srai> at <star index="3"/> </srai>
+</li>
+</condition>
+</template>
+</category>
+
+
+
+<!--
+Funcion para pedir una cita el siguiente dia de la semana a una hora concreta
+-->
+<category>
+<pattern>* cita ^ [proximo siguiente] <set>dia_semana</set> (a las) <set>horas</set> </pattern>
+<template>
+<think>
+    <set var="dias_restantes"><srai>DAYS UNTIL <star index="3"/></srai></set>
+</think>
+<srai>fijar cita <srai>DATE IN <get var="dias_restantes"/> DAYS</srai> at <star index="4"/></srai>
+</template>
+</category>
+
+
+
+</topic>
+
+</aiml>
